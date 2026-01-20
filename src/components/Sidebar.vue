@@ -14,10 +14,7 @@
     <!-- Menu Navigasi -->
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item" v-for="item in menuItems" :key="item.path">
-        <router-link
-          :to="item.path"
-          :class="['nav-link', 'sidebar-link', isActive(item) ? 'active' : '']"
-        >
+        <router-link :to="item.path" :class="['nav-link', 'sidebar-link', isActive(item) ? 'active' : '']">
           <i :class="item.icon" class="me-2"></i>
           <span v-if="!collapsed">{{ item.label }}</span>
         </router-link>
@@ -26,11 +23,7 @@
 
     <!-- Tombol Logout -->
     <div class="mt-auto">
-      <button
-        v-if="isLoggedIn"
-        @click="logout"
-        class="btn btn-logout w-100 d-flex align-items-center"
-      >
+      <button v-if="isLoggedIn" @click="logout" class="btn btn-logout w-100 d-flex align-items-center">
         <i class="bi bi-box-arrow-right me-2"></i>
         <span v-if="!collapsed">Logout</span>
       </button>
@@ -48,39 +41,46 @@ export default {
         {
           path: "/dashboard",
           label: "Dashboard",
-          icon: "bi bi-house-door"
+          icon: "bi bi-house-door",
         },
+        {
+          path: "/maps",
+          label: "Maps",
+          icon: "bi bi-geo-alt",
+          matchPaths: ["/maps"],
+        },
+
         {
           path: "/members",
           label: "Members",
           icon: "bi bi-people",
-          matchPaths: ["/members", "/members/tambah", "/members/edit"]
+          matchPaths: ["/members", "/members/tambah", "/members/edit"],
         },
         {
           path: "/buku",
           label: "Buku",
           icon: "bi bi-journal-bookmark",
-          matchPaths: ["/buku", "/buku/tambah", "/buku/edit"]
+          matchPaths: ["/buku", "/buku/tambah", "/buku/edit"],
         },
         {
           path: "/peminjaman",
           label: "Peminjaman",
           icon: "bi bi-calendar-check",
-          matchPaths: ["/peminjaman", "/peminjaman/tambah", "/peminjaman/edit"]
+          matchPaths: ["/peminjaman", "/peminjaman/tambah", "/peminjaman/edit"],
         },
         {
           path: "/denda",
           label: "Denda",
           icon: "bi bi-cash-stack",
-          matchPaths: ["/denda", "/denda/tambah", "/denda/edit"]
-        }
-      ]
+          matchPaths: ["/denda", "/denda/tambah", "/denda/edit"],
+        },
+      ],
     };
   },
   computed: {
     isLoggedIn() {
       return !!localStorage.getItem("access_token");
-    }
+    },
   },
   methods: {
     logout() {
@@ -94,11 +94,11 @@ export default {
     isActive(item) {
       const currentPath = this.$route.path;
       if (item.matchPaths && Array.isArray(item.matchPaths)) {
-        return item.matchPaths.some(path => currentPath.startsWith(path));
+        return item.matchPaths.some((path) => currentPath.startsWith(path));
       }
       return currentPath === item.path || currentPath.startsWith(item.path + "/");
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -123,7 +123,9 @@ export default {
   font-weight: 500;
   padding: 0.75rem 1rem;
   border-radius: 0.375rem;
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
   display: flex;
   align-items: center;
   text-decoration: none;
