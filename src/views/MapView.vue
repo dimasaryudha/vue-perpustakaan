@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <h2>Peta Perpustakaan Bogor</h2>
+  <div class="map-wrapper">
+    <h2 class="title">Peta Perpustakaan Bogor</h2>
 
-    <select v-model="selectedLibrary">
+    <select v-model="selectedLibrary" class="select-box">
       <option value="">Pilih Perpustakaan</option>
       <option
         v-for="(lib, index) in libraries"
@@ -13,7 +13,7 @@
       </option>
     </select>
 
-    <p v-if="distance">
+    <p v-if="distance" class="distance">
       Jarak: {{ distance.toFixed(2) }} km
     </p>
 
@@ -27,6 +27,20 @@ import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+
+const userIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+  iconSize: [35, 35],
+  iconAnchor: [17, 34],
+  popupAnchor: [0, -30]
+});
+
+const libraryIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+  iconSize: [35, 35],
+  iconAnchor: [17, 34],
+  popupAnchor: [0, -30]
+});
 
 export default {
   name: "MapView",
@@ -77,26 +91,31 @@ export default {
           this.initMap();
           this.getUserAddress();
         },
-        () => {
-          alert("Izin lokasi ditolak");
-        }
+        () => alert("Izin lokasi ditolak")
       );
     },
 
     initMap() {
-      this.map = L.map("map").setView(
+      this.map = L.map("map", {
+        zoomControl: false
+      }).setView(
         [this.userLocation.lat, this.userLocation.lng],
-        13
+        14
       );
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
-      }).addTo(this.map);
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          attribution: "© OpenStreetMap © CARTO"
+        }
+      ).addTo(this.map);
 
-      this.userMarker = L.marker([
-        this.userLocation.lat,
-        this.userLocation.lng
-      ])
+      L.control.zoom({ position: "bottomright" }).addTo(this.map);
+
+      this.userMarker = L.marker(
+        [this.userLocation.lat, this.userLocation.lng],
+        { icon: userIcon }
+      )
         .addTo(this.map)
         .bindPopup(`
           <b>📍 Lokasi Anda</b><br/>
@@ -115,13 +134,10 @@ export default {
         })
         .then((res) => {
           this.userAddress = res.data.display_name;
-
-          if (this.userMarker) {
-            this.userMarker.setPopupContent(`
-              <b>📍 Lokasi Anda</b><br/>
-              ${this.userAddress}
-            `);
-          }
+          this.userMarker.setPopupContent(`
+            <b>📍 Lokasi Anda</b><br/>
+            ${this.userAddress}
+          `);
         })
         .catch(() => {
           this.userAddress = "Alamat tidak ditemukan";
@@ -155,9 +171,12 @@ export default {
         this.map.removeControl(this.routeControl);
       }
 
-      this.libraryMarker = L.marker([lib.lat, lib.lng])
+      this.libraryMarker = L.marker(
+        [lib.lat, lib.lng],
+        { icon: libraryIcon }
+      )
         .addTo(this.map)
-        .bindPopup(lib.name)
+        .bindPopup(`📚 <b>${lib.name}</b>`)
         .openPopup();
 
       this.distance = this.calculateDistance(
@@ -178,7 +197,7 @@ export default {
         show: false,
         createMarker: () => null,
         lineOptions: {
-          styles: [{ weight: 5 }]
+          styles: [{ weight: 6 }]
         }
       }).addTo(this.map);
     }
@@ -187,8 +206,32 @@ export default {
 </script>
 
 <style>
+.map-wrapper {
+  max-width: 900px;
+  margin: auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.title {
+  margin-bottom: 10px;
+}
+
+.select-box {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+}
+
+.distance {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
 #map {
-  height: 500px;
-  margin-top: 10px;
+  height: 520px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 </style>
