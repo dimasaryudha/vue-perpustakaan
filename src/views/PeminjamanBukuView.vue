@@ -2,7 +2,6 @@
   <div class="container mt-4">
     <h2>Daftar Peminjaman Buku</h2>
 
-    <!-- Tombol Aksi -->
     <div class="mb-3 d-flex flex-wrap gap-2">
       <router-link to="/peminjaman/tambah" class="btn btn-primary flex-grow-1 flex-sm-grow-0">
         Tambah Peminjaman
@@ -12,7 +11,6 @@
       </button>
     </div>
 
-    <!-- Tabel Data -->
     <div class="table-responsive mb-4">
       <table class="table table-bordered align-middle">
         <thead class="table-primary text-center">
@@ -29,8 +27,10 @@
           </tr>
         </thead>
         <tbody class="bg-white">
-          <tr v-for="(peminjaman, index) in peminjamanList" :key="peminjaman.id">
-            <td class="text-center">{{ index + 1 }}</td>
+          <tr v-for="(peminjaman, index) in paginatedPeminjaman" :key="peminjaman.id">
+            <td class="text-center">
+              {{ (currentPage - 1) * perPage + index + 1 }}
+            </td>
             <td>{{ peminjaman.member?.nama || "Data member tidak tersedia" }}</td>
             <td>{{ peminjaman.buku?.judul || "Data buku tidak tersedia" }}</td>
             <td>{{ formatTanggal(peminjaman.tgl_pinjam) }}</td>
@@ -63,6 +63,30 @@
           </tr>
         </tbody>
       </table>
+      <nav v-if="totalPages > 1" class="d-flex justify-content-end mt-3">
+        <ul class="pagination">
+
+          <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <button class="page-link" @click="currentPage--">Prev</button>
+          </li>
+
+          <li
+            class="page-item"
+            v-for="page in totalPages"
+            :key="page"
+            :class="{ active: page === currentPage }"
+          >
+            <button class="page-link" @click="currentPage = page">
+              {{ page }}
+            </button>
+          </li>
+
+          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+            <button class="page-link" @click="currentPage++">Next</button>
+          </li>
+
+        </ul>
+      </nav>
     </div>
   </div>
 </template>
@@ -83,11 +107,23 @@ export default {
       memberList: [],
       dendaList: [],
       tarifDendaPerHari: 1000,
+      currentPage: 1,
+      perPage: 20
     };
   },
   mounted() {
     this.fetchAllData();
     this.fetchDenda();
+  },
+  computed: {
+    paginatedPeminjaman() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.peminjamanList.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.peminjamanList.length / this.perPage);
+    }
   },
   methods: {
     getAuthHeaders() {
