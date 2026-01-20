@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap'; // ini untuk JS seperti navbar collapse
+import 'leaflet/dist/leaflet.css'
 
 
 // import './style.css'

@@ -1,94 +1,109 @@
 <template>
-  <div class="container mt-4">
-    <h2>Lokasi Peminjam & Perpustakaan</h2>
+  <div>
+    <h2>Peta Perpustakaan Bogor</h2>
 
-    <div id="map" class="map-container"></div>
+    <select v-model="selectedLibrary">
+      <option value="">Pilih Perpustakaan</option>
+      <option
+        v-for="(lib, index) in libraries"
+        :key="index"
+        :value="lib"
+      >
+        {{ lib.name }}
+      </option>
+    </select>
 
-    <div class="mt-3">
-      <p><strong>Lokasi Anda:</strong> {{ userLat }}, {{ userLng }}</p>
-      <p><strong>Perpustakaan:</strong> {{ libraryLat }}, {{ libraryLng }}</p>
-    </div>
+    <p v-if="distance">
+      Jarak: {{ distance.toFixed(2) }} km
+    </p>
+
+    <div id="map"></div>
   </div>
 </template>
 
 <script>
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 
 export default {
   name: "MapView",
+
   data() {
     return {
       map: null,
-      userLat: null,
-      userLng: null,
-
-      // 📌 KOORDINAT PERPUSTAKAAN (contoh: SMK Wikrama Bogor)
-      libraryLat: -6.6407,
-      libraryLng: 106.8231,
+      userLocation: {
+        lat: -6.6017,
+        lng: 106.8050
+      },
+      libraries: [
+        { name: "Perpustakaan Kota Bogor", lat: -6.5971, lng: 106.8060 },
+        { name: "Perpustakaan IPB", lat: -6.5596, lng: 106.7231 }
+      ],
+      selectedLibrary: "",
+      distance: null,
+      libraryMarker: null
     };
   },
+
   mounted() {
-    this.getUserLocation();
+    this.map = L.map("map").setView(
+      [this.userLocation.lat, this.userLocation.lng],
+      13
+    );
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap"
+    }).addTo(this.map);
+
+    L.marker([this.userLocation.lat, this.userLocation.lng])
+      .addTo(this.map)
+      .bindPopup("Posisi Anda");
   },
-  methods: {
-    getUserLocation() {
-      if (!navigator.geolocation) {
-        alert("Browser tidak mendukung GPS.");
-        return;
+
+  watch: {
+    selectedLibrary(lib) {
+      if (!lib) return;
+
+      if (this.libraryMarker) {
+        this.map.removeLayer(this.libraryMarker);
       }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.userLat = position.coords.latitude;
-          this.userLng = position.coords.longitude;
-          this.initMap();
-        },
-        () => {
-          alert("Gagal mengambil lokasi Anda.");
-        }
-      );
-    },
-
-    initMap() {
-      this.map = L.map("map").setView(
-        [this.userLat, this.userLng],
-        14
-      );
-
-      // Map tile
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
-      }).addTo(this.map);
-
-      // Marker user
-      L.marker([this.userLat, this.userLng])
+      this.libraryMarker = L.marker([lib.lat, lib.lng])
         .addTo(this.map)
-        .bindPopup("📍 Posisi Anda")
+        .bindPopup(lib.name)
         .openPopup();
 
-      // Marker perpustakaan
-      L.marker([this.libraryLat, this.libraryLng])
-        .addTo(this.map)
-        .bindPopup("🏫 Perpustakaan");
+      this.distance = this.calculateDistance(
+        this.userLocation.lat,
+        this.userLocation.lng,
+        lib.lat,
+        lib.lng
+      );
 
-      // Garis antara user & perpustakaan
-      L.polyline(
-        [
-          [this.userLat, this.userLng],
-          [this.libraryLat, this.libraryLng],
-        ],
-        { color: "blue" }
-      ).addTo(this.map);
-    },
+      this.map.setView([lib.lat, lib.lng], 14);
+    }
   },
+
+  methods: {
+    calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) ** 2;
+
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+  }
 };
 </script>
 
-<style scoped>
-.map-container {
-  width: 100%;
-  height: 400px;
-  border-radius: 8px;
+<style>
+#map {
+  height: 500px;
+  margin-top: 10px;
 }
 </style>
