@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard">
-    <!-- Statistik -->
     <div class="stats">
       <div class="stat-card red">
         <div class="icon"><i class="fas fa-user"></i></div>
@@ -35,16 +34,13 @@
       </div>
     </div>
 
-    <!-- Konten Utama -->
     <div class="main-content">
-      <!-- Grafik -->
       <div class="chart">
         <h2>Grafik Peminjaman Buku</h2>
         <BarChart v-if="chartData" :chart-data="chartData" />
         <div v-else class="chart-placeholder">(Memuat grafik...)</div>
       </div>
 
-      <!-- Pemberitahuan -->
       <div class="notifications">
         <h2>Pemberitahuan</h2>
         <div class="notification red">
@@ -171,7 +167,7 @@ export default {
           const monthlyData = Array(12).fill(0);
 
           data.forEach((item) => {
-            const date = new Date(item.tgl_pinjam); // pastikan fieldnya tgl_pinjam
+            const date = new Date(item.tgl_pinjam); 
             if (!isNaN(date)) {
               const month = date.getMonth();
               monthlyData[month]++;

@@ -2,7 +2,19 @@
   <div class="container mt-4">
     <h2>Daftar Member</h2>
 
-    <router-link to="/members/tambah" class="btn btn-primary mb-3">Tambah Member</router-link>
+    <div class="row align-items-center mb-3">
+      <div class="col-md-6 col-12 mb-2 mb-md-0">
+        <router-link to="/members/tambah" class="btn btn-primary mb-3">Tambah Member</router-link>
+      </div>
+      <div class="col-md-6 col-12 text-md-end">
+        <input
+          type="text"
+          class="form-control d-inline-block w-75"
+          v-model="searchNama"
+          placeholder="Cari Nama Member..."
+        />
+      </div>
+    </div>
 
     <div class="table-responsive">
       <table class="table table-bordered align-middle">
@@ -17,7 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users" :key="user.id">
+          <tr v-for="user in filteredUsers" :key="user.id">
             <td>{{ user.no_ktp }}</td>
             <td>{{ user.nama }}</td>
             <td>{{ user.alamat }}</td>
@@ -103,6 +115,7 @@ export default {
   data() {
     return {
       users: [],
+      searchNama: "",
       selectedUser: null,
       isEditing: false,
       editForm: {
@@ -121,6 +134,15 @@ export default {
       if (to.query.reload) {
         this.fetchUsers();
       }
+    }
+  },
+  computed: {
+    filteredUsers() {
+      return this.users.filter(user =>
+        (user.nama || "")
+          .toLowerCase()
+          .includes(this.searchNama.toLowerCase())
+      );
     }
   },
   methods: {
