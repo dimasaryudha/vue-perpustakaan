@@ -19,7 +19,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(denda, idx) in dendaList" :key="denda.id">
+        <tr v-for="(denda, idx) in paginatedDenda" :key="denda.id">
           <td>{{ idx + 1 }}</td>
           <td>{{ getMemberName(denda.id_member) }}</td>
           <td>{{ getBukuJudul(denda.id_buku) }}</td>
@@ -37,6 +37,30 @@
         </tr>
       </tbody>
     </table>
+    <nav v-if="totalPages > 1" class="d-flex justify-content-end mt-3">
+      <ul class="pagination">
+
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <button class="page-link" @click="currentPage--">Prev</button>
+        </li>
+
+        <li
+          class="page-item"
+          v-for="page in totalPages"
+          :key="page"
+          :class="{ active: page === currentPage }"
+        >
+          <button class="page-link" @click="currentPage = page">
+            {{ page }}
+          </button>
+        </li>
+
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <button class="page-link" @click="currentPage++">Next</button>
+        </li>
+
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -51,6 +75,8 @@ export default {
       dendaList: [],
       memberList: [],
       bukuList: [],
+      currentPage: 1,
+      perPage: 20
     };
   },
   created() {
@@ -63,6 +89,16 @@ export default {
         this.fetchAllData();
         this.$router.replace({ path: this.$route.path, query: {} }); // perbaikan: hapus query param
       }
+    },
+  },
+  computed: {
+    paginatedDenda() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.dendaList.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.dendaList.length / this.perPage);
     },
   },
   methods: {
