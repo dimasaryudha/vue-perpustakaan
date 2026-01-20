@@ -1,22 +1,41 @@
 <template>
-  <div class="map-wrapper">
-    <h2 class="title">Peta Perpustakaan Bogor</h2>
+  <div class="map-page">
+    <div class="card">
+      <h2 class="title">📍 Peta Perpustakaan Bogor</h2>
 
-    <select v-model="selectedLibrary" class="select-box">
-      <option value="">Pilih Perpustakaan</option>
-      <option
-        v-for="(lib, index) in libraries"
-        :key="index"
-        :value="lib"
+      <!-- PILIH PERPUSTAKAAN -->
+      <select v-model="selectedLibrary" class="select">
+        <option value="">Pilih Perpustakaan</option>
+        <option
+          v-for="(lib, i) in libraries"
+          :key="i"
+          :value="lib"
+        >
+          {{ lib.name }}
+        </option>
+      </select>
+
+      <!-- PILIH TRANSPORTASI -->
+      <select
+        v-if="selectedLibrary"
+        v-model="selectedTransport"
+        class="select"
       >
-        {{ lib.name }}
-      </option>
-    </select>
+        <option value="">Pilih Transportasi</option>
+        <option value="walk">🚶 Jalan kaki</option>
+        <option value="bike">🚲 Sepeda</option>
+        <option value="motor">🏍️ Motor</option>
+        <option value="car">🚗 Mobil</option>
+      </select>
 
-    <p v-if="distance" class="distance">
-      Jarak: {{ distance.toFixed(2) }} km
-    </p>
+      <!-- INFO -->
+      <div v-if="estimatedTime" class="info">
+        <p>📏 Jarak: <b>{{ distance.toFixed(2) }} km</b></p>
+        <p>⏱️ Estimasi Waktu: <b>{{ estimatedTime }} menit</b></p>
+      </div>
+    </div>
 
+    <!-- MAP -->
     <div id="map"></div>
   </div>
 </template>
@@ -24,23 +43,8 @@
 <script>
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import axios from "axios";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
-
-const userIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
-  iconSize: [35, 35],
-  iconAnchor: [17, 34],
-  popupAnchor: [0, -30]
-});
-
-const libraryIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
-  iconSize: [35, 35],
-  iconAnchor: [17, 34],
-  popupAnchor: [0, -30]
-});
 
 export default {
   name: "MapView",
@@ -55,20 +59,16 @@ export default {
         lng: null
       },
 
-      userAddress: "Mengambil alamat...",
-
       libraries: [
         { name: "Perpustakaan Kota Bogor", lat: -6.5971, lng: 106.8060 },
         { name: "Perpustakaan IPB", lat: -6.5596, lng: 106.7231 },
-        { name: "Perpustakaan Umum Bogor Tengah", lat: -6.5956, lng: 106.7972 },
         { name: "Perpustakaan Balai Kota Bogor", lat: -6.5946, lng: 106.8013 },
-        { name: "Perpustakaan Pusat Dokumentasi dan Informasi Bogor", lat: -6.5939, lng: 106.8085 }
+        { name: "Perpustakaan Bogor Tengah", lat: -6.5956, lng: 106.7972 }
       ],
 
       selectedLibrary: "",
-      distance: null,
-      libraryMarker: null,
-      userMarker: null
+      selectedTransport: "",
+      distance: null
     };
   },
 
@@ -76,72 +76,54 @@ export default {
     this.getUserLocation();
   },
 
+  computed: {
+    estimatedTime() {
+      if (!this.distance || !this.selectedTransport) return null;
+
+      const speed = {
+        walk: 5,
+        bike: 15,
+        motor: 30,
+        car: 25
+      };
+
+      return Math.round((this.distance / speed[this.selectedTransport]) * 60);
+    }
+  },
+
+  watch: {
+    selectedLibrary() {
+      this.selectedTransport = "";
+      this.distance = null;
+    }
+  },
+
   methods: {
     getUserLocation() {
-      if (!navigator.geolocation) {
-        alert("Browser tidak mendukung GPS");
-        return;
-      }
-
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.userLocation.lat = position.coords.latitude;
-          this.userLocation.lng = position.coords.longitude;
-
+        (pos) => {
+          this.userLocation.lat = pos.coords.latitude;
+          this.userLocation.lng = pos.coords.longitude;
           this.initMap();
-          this.getUserAddress();
         },
         () => alert("Izin lokasi ditolak")
       );
     },
 
     initMap() {
-      this.map = L.map("map", {
-        zoomControl: false
-      }).setView(
+      this.map = L.map("map").setView(
         [this.userLocation.lat, this.userLocation.lng],
         14
       );
 
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-        {
-          attribution: "© OpenStreetMap © CARTO"
-        }
-      ).addTo(this.map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+      }).addTo(this.map);
 
-      L.control.zoom({ position: "bottomright" }).addTo(this.map);
-
-      this.userMarker = L.marker(
-        [this.userLocation.lat, this.userLocation.lng],
-        { icon: userIcon }
-      )
+      L.marker([this.userLocation.lat, this.userLocation.lng])
         .addTo(this.map)
-        .bindPopup(`
-          <b>📍 Lokasi Anda</b><br/>
-          ${this.userAddress}
-        `);
-    },
-
-    getUserAddress() {
-      axios
-        .get("https://nominatim.openstreetmap.org/reverse", {
-          params: {
-            format: "json",
-            lat: this.userLocation.lat,
-            lon: this.userLocation.lng
-          }
-        })
-        .then((res) => {
-          this.userAddress = res.data.display_name;
-          this.userMarker.setPopupContent(`
-            <b>📍 Lokasi Anda</b><br/>
-            ${this.userAddress}
-          `);
-        })
-        .catch(() => {
-          this.userAddress = "Alamat tidak ditemukan";
-        });
+        .bindPopup("📍 Lokasi Anda")
+        .openPopup();
     },
 
     calculateDistance(lat1, lon1, lat2, lon2) {
@@ -163,21 +145,9 @@ export default {
     selectedLibrary(lib) {
       if (!lib || !this.map) return;
 
-      if (this.libraryMarker) {
-        this.map.removeLayer(this.libraryMarker);
-      }
-
       if (this.routeControl) {
         this.map.removeControl(this.routeControl);
       }
-
-      this.libraryMarker = L.marker(
-        [lib.lat, lib.lng],
-        { icon: libraryIcon }
-      )
-        .addTo(this.map)
-        .bindPopup(`📚 <b>${lib.name}</b>`)
-        .openPopup();
 
       this.distance = this.calculateDistance(
         this.userLocation.lat,
@@ -191,47 +161,52 @@ export default {
           L.latLng(this.userLocation.lat, this.userLocation.lng),
           L.latLng(lib.lat, lib.lng)
         ],
-        routeWhileDragging: false,
         addWaypoints: false,
         draggableWaypoints: false,
         show: false,
-        createMarker: () => null,
-        lineOptions: {
-          styles: [{ weight: 6 }]
-        }
+        createMarker: () => null
       }).addTo(this.map);
     }
   }
 };
 </script>
 
-<style>
-.map-wrapper {
+<style scoped>
+.map-page {
   max-width: 900px;
   margin: auto;
   font-family: "Segoe UI", sans-serif;
 }
 
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
 .title {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-.select-box {
+.select {
   width: 100%;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 10px;
   border: 1px solid #ddd;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.distance {
-  margin-bottom: 10px;
+.info {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 10px;
   font-weight: 500;
 }
 
 #map {
   height: 520px;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 </style>
