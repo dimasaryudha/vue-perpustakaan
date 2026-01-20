@@ -60,16 +60,56 @@
       </table>
     </div>
 
-    <!-- Modal Detail / Edit Member -->
     <div v-if="selectedUser && !isEditing" class="modal-backdrop">
       <div class="modal-dialog">
-        <div class="modal-content p-3">
+        <div class="modal-content p-3 position-relative">
+
+          <button
+            type="button"
+            class="btn-close position-absolute top-0 end-0 m-3"
+            aria-label="Close"
+            @click="closeModal">
+          </button>
+
           <h4>Detail Member</h4>
-          <p><strong>No KTP:</strong> {{ selectedUser.no_ktp }}</p>
-          <p><strong>Nama:</strong> {{ selectedUser.nama }}</p>
-          <p><strong>Alamat:</strong> {{ selectedUser.alamat }}</p>
-          <p><strong>Tanggal Lahir:</strong> {{ selectedUser.tgl_lahir }}</p>
-          <button class="btn btn-secondary mt-3" @click="closeModal">Tutup</button>
+
+          <div class="mb-3">
+            <label class="form-label">No KTP</label>
+            <input
+              type="text"
+              class="form-control"
+              :value="selectedUser.no_ktp"
+              disabled
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nama</label>
+            <input
+              type="text"
+              class="form-control"
+              :value="selectedUser.nama"
+              disabled
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Alamat</label>
+            <textarea
+              class="form-control"
+              disabled
+            >{{ selectedUser.alamat }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tanggal Lahir</label>
+            <input
+              type="date"
+              class="form-control"
+              :value="selectedUser.tgl_lahir"
+              disabled
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -77,6 +117,12 @@
     <div v-if="selectedUser && isEditing" class="modal-backdrop">
       <div class="modal-dialog">
         <div class="modal-content p-3">
+            <button
+            type="button"
+            class="btn-close position-absolute top-0 end-0 m-3"
+            aria-label="Close"
+            @click="cancelEdit">
+          </button>
           <h4>Edit Member</h4>
           <form @submit.prevent="updateUser">
             <div class="mb-3">
@@ -87,7 +133,6 @@
               <label class="form-label">Nama</label>
               <input v-model="editForm.nama" type="text" class="form-control" required />
             </div>
-            <!-- Email dihapus dari form edit -->
             <div class="mb-3">
               <label class="form-label">Alamat</label>
               <textarea v-model="editForm.alamat" class="form-control" required></textarea>
@@ -97,7 +142,6 @@
               <input v-model="editForm.tgl_lahir" type="date" class="form-control" required />
             </div>
             <button type="submit" class="btn btn-primary me-2">Simpan</button>
-            <button type="button" class="btn btn-secondary" @click="cancelEdit">Batal</button>
           </form>
         </div>
       </div>
@@ -162,9 +206,7 @@ export default {
       axios
         .get(API_BASE_URL, { headers })
         .then((res) => {
-          // API response bisa berupa array langsung atau objek data
           const data = Array.isArray(res.data) ? res.data : res.data.data;
-
           this.users = data.map((u) => ({
             id: u.id,
             no_ktp: u.no_ktp,
@@ -263,6 +305,14 @@ export default {
   z-index: 1050;
   padding: 1rem;
   overflow-y: auto;
+}
+
+.modal-content input:disabled,
+.modal-content textarea:disabled {
+  background-color: #ffffff !important;
+  color: #212529;
+  opacity: 1;
+  cursor: default;
 }
 
 .modal-dialog {

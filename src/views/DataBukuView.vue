@@ -60,45 +60,109 @@
       </table>
     </div>
 
-    <!-- Modal Detail / Edit -->
-    <div v-if="selectedBuku" class="modal-overlay" @click.self="closeForm">
-      <div class="modal-content">
-        <h4>{{ isEditMode ? 'Edit Buku' : 'Detail Buku' }}</h4>
-        <form @submit.prevent="isEditMode ? updateBuku() : null">
-          <div class="mb-3">
+    <div v-if="selectedBuku && !isEditing" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-content p-3 position-relative">
+
+          <button
+            type="button"
+            class="btn-close position-absolute top-0 end-0 m-3"
+            @click="closeModal">
+          </button>
+
+          <h4>Detail Buku</h4>
+
+          <div class="mb-2">
             <label class="form-label">No Rak</label>
-            <input type="text" class="form-control" v-model="form.no_rak" :disabled="!isEditMode" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Judul</label>
-            <input type="text" class="form-control" v-model="form.judul" :disabled="!isEditMode" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Pengarang</label>
-            <input type="text" class="form-control" v-model="form.pengarang" :disabled="!isEditMode" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Tahun Terbit</label>
-            <input type="number" class="form-control" v-model.number="form.tahun_terbit" :disabled="!isEditMode" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Penerbit</label>
-            <input type="text" class="form-control" v-model="form.penerbit" :disabled="!isEditMode" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Stok</label>
-            <input type="number" class="form-control" v-model.number="form.stok" :disabled="!isEditMode" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Detail</label>
-            <input type="text" class="form-control" v-model="form.detail" :disabled="!isEditMode" required />
+            <input class="form-control" :value="selectedBuku.no_rak" readonly />
           </div>
 
-          <div>
-            <button v-if="isEditMode" type="submit" class="btn btn-success me-2">Simpan</button>
-            <button type="button" class="btn btn-secondary" @click="closeForm">Batal</button>
+          <div class="mb-2">
+            <label class="form-label">Judul</label>
+            <input class="form-control" :value="selectedBuku.judul" readonly />
           </div>
-        </form>
+
+          <div class="mb-2">
+            <label class="form-label">Pengarang</label>
+            <input class="form-control" :value="selectedBuku.pengarang" readonly />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Tahun Terbit</label>
+            <input class="form-control" :value="selectedBuku.tahun_terbit" readonly />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Penerbit</label>
+            <input class="form-control" :value="selectedBuku.penerbit" readonly />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Stok</label>
+            <input class="form-control" :value="selectedBuku.stok" readonly />
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Detail</label>
+            <textarea class="form-control" readonly>{{ selectedBuku.detail }}</textarea>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div v-if="selectedBuku && isEditing" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-content p-3 position-relative">
+
+          <button
+            type="button"
+            class="btn-close position-absolute top-0 end-0 m-3"
+            @click="cancelEdit">
+          </button>
+
+          <h4>Edit Buku</h4>
+
+          <form @submit.prevent="updateBuku">
+            <div class="mb-2">
+              <label>No Rak</label>
+              <input class="form-control" v-model="editForm.no_rak" required />
+            </div>
+
+            <div class="mb-2">
+              <label>Judul</label>
+              <input class="form-control" v-model="editForm.judul" required />
+            </div>
+
+            <div class="mb-2">
+              <label>Pengarang</label>
+              <input class="form-control" v-model="editForm.pengarang" required />
+            </div>
+
+            <div class="mb-2">
+              <label>Tahun Terbit</label>
+              <input type="number" class="form-control" v-model="editForm.tahun_terbit" required />
+            </div>
+
+            <div class="mb-2">
+              <label>Penerbit</label>
+              <input class="form-control" v-model="editForm.penerbit" required />
+            </div>
+
+            <div class="mb-2">
+              <label>Stok</label>
+              <input type="number" class="form-control" v-model="editForm.stok" required />
+            </div>
+
+            <div class="mb-3">
+              <label>Detail</label>
+              <textarea class="form-control" v-model="editForm.detail"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary me-2">Simpan</button>
+          </form>
+
+        </div>
       </div>
     </div>
   </div>
@@ -111,31 +175,31 @@ const API_BASE_URL = "http://45.64.100.26:88/perpus-api/public/api/buku";
 
 export default {
   name: "DataBukuView",
+
   data() {
     return {
       bukuList: [],
       searchJudul: "",
+
       selectedBuku: null,
-      isEditMode: false,
-      form: {
+      isEditing: false,
+
+      editForm: {
         no_rak: "",
         judul: "",
         pengarang: "",
-        tahun_terbit: null,
+        tahun_terbit: "",
         penerbit: "",
-        stok: null,
+        stok: "",
         detail: ""
       }
     };
   },
+
   mounted() {
     this.fetchBuku();
   },
-  watch: {
-    '$route.query.reload'(val) {
-      if (val) this.fetchBuku();
-    }
-  },
+
   computed: {
     filteredBuku() {
       return this.bukuList.filter(buku =>
@@ -145,7 +209,9 @@ export default {
       );
     }
   },
+
   methods: {
+    // ================= AUTH =================
     getAuthHeaders() {
       const token = localStorage.getItem("access_token");
       if (!token) {
@@ -155,75 +221,93 @@ export default {
       }
       return { Authorization: `Bearer ${token}` };
     },
+
+    // ================= FETCH =================
     fetchBuku() {
       const headers = this.getAuthHeaders();
       if (!headers) return;
 
       axios.get(API_BASE_URL, { headers })
         .then(res => {
-          this.bukuList = Array.isArray(res.data) ? res.data : res.data.data;
+          this.bukuList = Array.isArray(res.data)
+            ? res.data
+            : res.data.data;
         })
         .catch(err => {
-          console.error("Gagal mengambil data buku:", err);
-          alert("Gagal mengambil data buku.");
+          console.error(err);
+          alert("Gagal mengambil data buku");
         });
     },
+
+    // ================= DETAIL =================
     showDetail(buku) {
-      this.isEditMode = false;
       this.selectedBuku = buku;
-      this.form = { ...buku };
+      this.isEditing = false;
     },
+
+    // ================= EDIT =================
     showEdit(buku) {
-      this.isEditMode = true;
       this.selectedBuku = buku;
-      this.form = { ...buku };
+      this.isEditing = true;
+      this.editForm = { ...buku };
     },
-    closeForm() {
+
+    // ================= CLOSE =================
+    closeModal() {
       this.selectedBuku = null;
-      this.isEditMode = false;
-      this.form = {
+      this.isEditing = false;
+      this.resetForm();
+    },
+
+    cancelEdit() {
+      this.closeModal();
+    },
+
+    resetForm() {
+      this.editForm = {
         no_rak: "",
         judul: "",
         pengarang: "",
-        tahun_terbit: null,
+        tahun_terbit: "",
         penerbit: "",
-        stok: null,
+        stok: "",
         detail: ""
       };
     },
+
+    // ================= UPDATE =================
     updateBuku() {
+      const headers = this.getAuthHeaders();
+      if (!headers || !this.selectedBuku) return;
+
+      axios.put(`${API_BASE_URL}/${this.selectedBuku.id}`, this.editForm, { headers })
+        .then(() => {
+          alert("Data buku berhasil diperbarui");
+          this.fetchBuku();
+          this.closeModal();
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Gagal memperbarui data buku");
+        });
+    },
+
+    // ================= DELETE =================
+    deleteBuku(id) {
+      if (!confirm("Yakin hapus buku ini?")) return;
+
       const headers = this.getAuthHeaders();
       if (!headers) return;
 
-      axios.put(`${API_BASE_URL}/${this.selectedBuku.id}`, this.form, { headers })
+      axios.delete(`${API_BASE_URL}/${id}`, { headers })
         .then(() => {
-          alert("Data buku berhasil diperbarui.");
+          alert("Buku berhasil dihapus");
           this.fetchBuku();
-          this.closeForm();
         })
         .catch(err => {
-          console.error("Gagal memperbarui data buku:", err);
-          alert("Gagal memperbarui data buku.");
+          console.error(err);
+          alert("Gagal menghapus buku");
         });
-    },
-    deleteBuku(id) {
-      if (confirm("Apakah Anda yakin ingin menghapus buku ini?")) {
-        const headers = this.getAuthHeaders();
-        if (!headers) return;
-
-        axios.delete(`${API_BASE_URL}/${id}`, { headers })
-          .then(() => {
-            alert("Buku berhasil dihapus.");
-            if (this.selectedBuku && this.selectedBuku.id === id) {
-              this.closeForm();
-            }
-            this.fetchBuku();
-          })
-          .catch(err => {
-            console.error("Gagal menghapus buku:", err);
-            alert("Gagal menghapus buku.");
-          });
-      }
     }
   }
 };
@@ -232,24 +316,26 @@ export default {
 <style scoped>
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   z-index: 9999;
 }
 
+.modal-dialog {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+}
+
 .modal-content {
-  background-color: white;
-  border-radius: 6px;
+  background: #fff;
+  border-radius: 8px;
   padding: 20px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 576px) {
