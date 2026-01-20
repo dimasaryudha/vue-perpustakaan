@@ -1,7 +1,23 @@
 <template>
   <div class="container mt-4">
     <h2>Daftar Buku</h2>
-    <router-link to="/buku/tambah" class="btn btn-primary mb-3">Tambah Buku</router-link>
+
+    <div class="row align-items-center mb-3">
+      <div class="col-md-6 col-12 mb-2 mb-md-0">
+        <router-link to="/buku/tambah" class="btn btn-primary">
+          Tambah Buku
+        </router-link>
+      </div>
+
+      <div class="col-md-6 col-12 text-md-end">
+        <input
+          type="text"
+          class="form-control d-inline-block w-75"
+          v-model="searchJudul"
+          placeholder="Cari judul buku..."
+        />
+      </div>
+    </div>
 
     <div class="table-responsive">
       <table class="table table-bordered align-middle">
@@ -18,7 +34,7 @@
           </tr>
         </thead>
         <tbody class="bg-white">
-          <tr v-for="buku in bukuList" :key="buku.id">
+          <tr v-for="buku in filteredBuku" :key="buku.id">
             <td>{{ buku.no_rak }}</td>
             <td>{{ buku.judul }}</td>
             <td>{{ buku.pengarang }}</td>
@@ -98,6 +114,7 @@ export default {
   data() {
     return {
       bukuList: [],
+      searchJudul: "",
       selectedBuku: null,
       isEditMode: false,
       form: {
@@ -117,6 +134,15 @@ export default {
   watch: {
     '$route.query.reload'(val) {
       if (val) this.fetchBuku();
+    }
+  },
+  computed: {
+    filteredBuku() {
+      return this.bukuList.filter(buku =>
+        (buku.judul || "")
+          .toLowerCase()
+          .includes(this.searchJudul.toLowerCase())
+      );
     }
   },
   methods: {
