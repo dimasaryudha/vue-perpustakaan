@@ -1,9 +1,6 @@
 <template>
   <div class="banner full-width">
-    <router-link to="/galery" class="back-btn">
-      ←
-    </router-link>
-
+    <router-link to="/galery" class="back-btn">←</router-link>
     <img src="@/assets/doc.jpg" alt="banner" />
   </div>
 
@@ -13,24 +10,29 @@
 
   <!-- GALLERY -->
   <div class="gallery">
-    <img src="@/assets/doc.jpg" class="g1" @click="openZoom($event)">
-    <img src="@/assets/doc2.jpg" class="g2" @click="openZoom($event)">
-    <img src="@/assets/doc3.jpg" class="g3" @click="openZoom($event)">
-    <img src="@/assets/doc2.jpg" class="g4" @click="openZoom($event)">
-    <img src="@/assets/doc.jpg" class="g5" @click="openZoom($event)">
-    <img src="@/assets/doc3.jpg" class="g6" @click="openZoom($event)">
-    <img src="@/assets/doc.jpg" class="g7" @click="openZoom($event)">
-    <img src="@/assets/doc2.jpg" class="g8" @click="openZoom($event)">
-    <img src="@/assets/doc3.jpg" class="g9" @click="openZoom($event)">
-    <img src="@/assets/doc.jpg" class="g10" @click="openZoom($event)">
-    <img src="@/assets/doc2.jpg" class="g11" @click="openZoom($event)">
+    <img src="@/assets/doc.jpg" class="g1" data-title="Rapat Tahunan" @click="openZoom">
+    <img src="@/assets/doc2.jpg" class="g2" data-title="Sosialisasi Produk" @click="openZoom">
+    <img src="@/assets/doc3.jpg" class="g3" data-title="Kegiatan CSR" @click="openZoom">
+    <img src="@/assets/doc2.jpg" class="g4" data-title="Pelatihan Karyawan" @click="openZoom">
+    <img src="@/assets/doc.jpg" class="g5" data-title="Monitoring Cabang" @click="openZoom">
+    <img src="@/assets/doc3.jpg" class="g6" data-title="Audit Internal" @click="openZoom">
+    <img src="@/assets/doc.jpg" class="g7" data-title="Kunjungan Nasabah" @click="openZoom">
+    <img src="@/assets/doc2.jpg" class="g8" data-title="Kerja Sama Mitra" @click="openZoom">
+    <img src="@/assets/doc3.jpg" class="g9" data-title="Perayaan HUT" @click="openZoom">
+    <img src="@/assets/doc.jpg" class="g10" data-title="Rapat Evaluasi" @click="openZoom">
+    <img src="@/assets/doc2.jpg" class="g11" data-title="Diskusi Tim" @click="openZoom">
   </div>
 
   <!-- ZOOM MODAL -->
   <div v-if="isZoom" class="zoom-overlay" @click.self="closeZoom">
     <div class="zoom-box">
+      <!-- TOMBOL BACK / CLOSE -->
       <button class="close-btn" @click="closeZoom">✕</button>
-      <img :src="zoomImage" />
+
+      <div class="zoom-image-wrapper">
+        <img :src="zoomImage" />
+        <div class="zoom-caption">{{ zoomTitle }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -40,9 +42,11 @@ import { ref } from 'vue'
 
 const isZoom = ref(false)
 const zoomImage = ref('')
+const zoomTitle = ref('')
 
-const openZoom = (event) => {
-  zoomImage.value = event.target.src
+const openZoom = (e) => {
+  zoomImage.value = e.target.src
+  zoomTitle.value = e.target.dataset.title
   isZoom.value = true
 }
 
@@ -52,11 +56,13 @@ const closeZoom = () => {
 </script>
 
 <style>
+/* ==== UMUM ==== */
 body {
   margin: 0;
   overflow-x: hidden;
 }
 
+/* ==== BANNER ==== */
 .banner {
   position: relative;
   width: 100%;
@@ -69,10 +75,9 @@ body {
   top: 20px;
   left: 20px;
   z-index: 10;
-  padding: 8px 14px;
   color: #fff;
-  text-decoration: none;
   font-size: 20px;
+  text-decoration: none;
 }
 
 .banner img {
@@ -81,19 +86,19 @@ body {
   object-fit: cover;
 }
 
+/* ==== TITLE ==== */
 .title-container {
   text-align: center;
   margin: 20px 0;
 }
 
 .title-container h1 {
-  display: inline-block;
   font-size: 24px;
-  padding-bottom: 5px;
   border-bottom: 2px solid #000;
+  display: inline-block;
 }
 
-/* GALLERY */
+/* ==== GALLERY ==== */
 .gallery {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -109,11 +114,6 @@ body {
   object-fit: cover;
   border-radius: 6px;
   cursor: pointer;
-  transition: transform 0.3s;
-}
-
-.gallery img:hover {
-  transform: scale(1.05);
 }
 
 .g1 { grid-column: span 2; }
@@ -122,11 +122,11 @@ body {
 .g8 { grid-row: span 2; }
 .g10 { grid-column: span 2; }
 
-/* ZOOM */
+/* ==== ZOOM ==== */
 .zoom-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.65);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -134,43 +134,62 @@ body {
 }
 
 .zoom-box {
-  position: relative;
+  position: relative; /* FIX UTAMA */
   background: #fff;
-  padding: 12px;
   border-radius: 10px;
-  max-width: 70%;
-  max-height: 80%;
-  animation: zoomIn 0.25s ease;
+  padding: 12px;
+  width: 600px;
+  max-width: 90%;
 }
 
-.zoom-box img {
-  max-width: 100%;
-  max-height: 60vh;
+.zoom-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #000;
   border-radius: 6px;
+  overflow: hidden;
 }
 
+.zoom-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* TEKS DI DALAM FOTO */
+.zoom-caption {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  color: #fff;
+  background: rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+/* TOMBOL CLOSE / BACK */
 .close-btn {
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 10px;
-  background: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   border: none;
-  font-size: 26px;
+  font-size: 20px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
   cursor: pointer;
+  z-index: 1000;
 }
 
-/* Animasi */
-@keyframes zoomIn {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.close-btn:hover {
+  background: rgba(0,0,0,0.85);
 }
 
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .banner {
     height: 120px;
@@ -178,16 +197,14 @@ body {
 
   .gallery {
     grid-template-columns: 1fr;
-    grid-auto-rows: 180px;
-  }
-
-  .g1, .g3, .g6, .g8, .g10 {
-    grid-column: span 1;
-    grid-row: span 1;
   }
 
   .zoom-box {
-    max-width: 90%;
+    width: 95%;
+  }
+
+  .zoom-image-wrapper {
+    height: 280px;
   }
 }
 </style>
