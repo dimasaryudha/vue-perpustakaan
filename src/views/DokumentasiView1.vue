@@ -11,16 +11,16 @@
   <!-- GALLERY -->
   <div class="gallery">
     <img src="@/assets/doc.jpg" class="g1" data-title="Rapat Tahunan" @click="openZoom">
-    <img src="@/assets/doc2.jpg" class="g2" data-title="Sosialisasi Produk" @click="openZoom">
-    <img src="@/assets/doc3.jpg" class="g3" data-title="Kegiatan CSR" @click="openZoom">
-    <img src="@/assets/doc2.jpg" class="g4" data-title="Pelatihan Karyawan" @click="openZoom">
+    <img src="@/assets/doc4.jpg" class="g2" data-title="Sosialisasi Produk" @click="openZoom">
+    <img src="@/assets/doc5.jpg" class="g3" data-title="Kegiatan CSR" @click="openZoom">
+    <img src="@/assets/doc4.jpg" class="g4" data-title="Pelatihan Karyawan" @click="openZoom">
     <img src="@/assets/doc.jpg" class="g5" data-title="Monitoring Cabang" @click="openZoom">
-    <img src="@/assets/doc3.jpg" class="g6" data-title="Audit Internal" @click="openZoom">
+    <img src="@/assets/doc5.jpg" class="g6" data-title="Audit Internal" @click="openZoom">
     <img src="@/assets/doc.jpg" class="g7" data-title="Kunjungan Nasabah" @click="openZoom">
-    <img src="@/assets/doc2.jpg" class="g8" data-title="Kerja Sama Mitra" @click="openZoom">
-    <img src="@/assets/doc3.jpg" class="g9" data-title="Perayaan HUT" @click="openZoom">
+    <img src="@/assets/doc4.jpg" class="g8" data-title="Kerja Sama Mitra" @click="openZoom">
+    <img src="@/assets/doc5.jpg" class="g9" data-title="Perayaan HUT" @click="openZoom">
     <img src="@/assets/doc.jpg" class="g10" data-title="Rapat Evaluasi" @click="openZoom">
-    <img src="@/assets/doc2.jpg" class="g11" data-title="Diskusi Tim" @click="openZoom">
+    <img src="@/assets/doc4.jpg" class="g11" data-title="Diskusi Tim" @click="openZoom">
   </div>
 
   <!-- ZOOM MODAL -->
@@ -56,13 +56,11 @@ const closeZoom = () => {
 </script>
 
 <style>
-/* ==== UMUM ==== */
 body {
   margin: 0;
   overflow-x: hidden;
 }
 
-/* ==== BANNER ==== */
 .banner {
   position: relative;
   width: 100%;
@@ -86,7 +84,6 @@ body {
   object-fit: cover;
 }
 
-/* ==== TITLE ==== */
 .title-container {
   text-align: center;
   margin: 20px 0;
@@ -98,7 +95,6 @@ body {
   display: inline-block;
 }
 
-/* ==== GALLERY ==== */
 .gallery {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -122,7 +118,6 @@ body {
 .g8 { grid-row: span 2; }
 .g10 { grid-column: span 2; }
 
-/* ==== ZOOM ==== */
 .zoom-overlay {
   position: fixed;
   inset: 0;
@@ -133,7 +128,6 @@ body {
   z-index: 999;
 }
 
-/* FRAME DIHILANGKAN */
 .zoom-box {
   position: relative;
   background: transparent;
@@ -142,7 +136,6 @@ body {
   height: 90vh;
 }
 
-/* FOTO LEBIH GEDE */
 .zoom-image-wrapper {
   width: 100%;
   height: 100%;
@@ -155,7 +148,6 @@ body {
   object-fit: contain;
 }
 
-/* JUDUL FOTO */
 .zoom-caption {
   position: absolute;
   bottom: 0;
@@ -167,7 +159,6 @@ body {
   text-align: center;
 }
 
-/* TOMBOL CLOSE */
 .close-btn {
   position: absolute;
   top: 15px;
@@ -187,7 +178,6 @@ body {
   background: rgba(0,0,0,0.85);
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
   .banner {
     height: 120px;
