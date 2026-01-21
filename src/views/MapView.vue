@@ -6,21 +6,13 @@
       <!-- PILIH PERPUSTAKAAN -->
       <select v-model="selectedLibrary" class="select">
         <option value="">Pilih Perpustakaan</option>
-        <option
-          v-for="(lib, i) in libraries"
-          :key="i"
-          :value="lib"
-        >
+        <option v-for="(lib, i) in libraries" :key="i" :value="lib">
           {{ lib.name }}
         </option>
       </select>
 
       <!-- PILIH TRANSPORTASI -->
-      <select
-        v-if="selectedLibrary"
-        v-model="selectedTransport"
-        class="select"
-      >
+      <select v-if="selectedLibrary" v-model="selectedTransport" class="select">
         <option value="">Pilih Transportasi</option>
         <option value="walk">🚶 Jalan kaki</option>
         <option value="bike">🚲 Sepeda</option>
@@ -30,8 +22,12 @@
 
       <!-- INFO -->
       <div v-if="estimatedTime" class="info">
-        <p>📏 Jarak: <b>{{ distance.toFixed(2) }} km</b></p>
-        <p>⏱️ Estimasi Waktu: <b>{{ estimatedTime }} menit</b></p>
+        <p>
+          📏 Jarak: <b>{{ distance.toFixed(2) }} km</b>
+        </p>
+        <p>
+          ⏱️ Estimasi Waktu: <b>{{ estimatedTime }} menit</b>
+        </p>
       </div>
     </div>
 
@@ -53,22 +49,23 @@ export default {
     return {
       map: null,
       routeControl: null,
+      libraryMarker: null,
 
       userLocation: {
         lat: null,
-        lng: null
+        lng: null,
       },
 
       libraries: [
-        { name: "Perpustakaan Kota Bogor", lat: -6.5971, lng: 106.8060 },
+        { name: "Perpustakaan Kota Bogor", lat: -6.5971, lng: 106.806 },
         { name: "Perpustakaan IPB", lat: -6.5596, lng: 106.7231 },
         { name: "Perpustakaan Balai Kota Bogor", lat: -6.5946, lng: 106.8013 },
-        { name: "Perpustakaan Bogor Tengah", lat: -6.5956, lng: 106.7972 }
+        { name: "Perpustakaan Bogor Tengah", lat: -6.5956, lng: 106.7972 },
       ],
 
       selectedLibrary: "",
       selectedTransport: "",
-      distance: null
+      distance: null,
     };
   },
 
@@ -84,18 +81,11 @@ export default {
         walk: 5,
         bike: 15,
         motor: 30,
-        car: 25
+        car: 25,
       };
 
       return Math.round((this.distance / speed[this.selectedTransport]) * 60);
-    }
-  },
-
-  watch: {
-    selectedLibrary() {
-      this.selectedTransport = "";
-      this.distance = null;
-    }
+    },
   },
 
   methods: {
@@ -106,21 +96,27 @@ export default {
           this.userLocation.lng = pos.coords.longitude;
           this.initMap();
         },
-        () => alert("Izin lokasi ditolak")
+        () => alert("Izin lokasi ditolak"),
       );
     },
 
     initMap() {
-      this.map = L.map("map").setView(
-        [this.userLocation.lat, this.userLocation.lng],
-        14
-      );
+      this.map = L.map("map").setView([this.userLocation.lat, this.userLocation.lng], 14);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
+        attribution: "© OpenStreetMap",
       }).addTo(this.map);
 
-      L.marker([this.userLocation.lat, this.userLocation.lng])
+      // ICON USER
+      const userIcon = L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149060.png",
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+      });
+
+      L.marker([this.userLocation.lat, this.userLocation.lng], {
+        icon: userIcon,
+      })
         .addTo(this.map)
         .bindPopup("📍 Lokasi Anda")
         .openPopup();
@@ -128,46 +124,60 @@ export default {
 
     calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
 
-      const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) ** 2;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
 
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
+    },
   },
 
   watch: {
     selectedLibrary(lib) {
       if (!lib || !this.map) return;
 
+      // HAPUS ROUTE LAMA
       if (this.routeControl) {
         this.map.removeControl(this.routeControl);
       }
 
-      this.distance = this.calculateDistance(
-        this.userLocation.lat,
-        this.userLocation.lng,
-        lib.lat,
-        lib.lng
-      );
+      // HAPUS MARKER PERPUSTAKAAN LAMA
+      if (this.libraryMarker) {
+        this.map.removeLayer(this.libraryMarker);
+      }
 
+      // HITUNG JARAK
+      this.distance = this.calculateDistance(this.userLocation.lat, this.userLocation.lng, lib.lat, lib.lng);
+
+      // ICON PERPUSTAKAAN (PIN LOKASI)
+      const libraryIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
+
+      // MARKER PERPUSTAKAAN
+      this.libraryMarker = L.marker([lib.lat, lib.lng], {
+        icon: libraryIcon,
+      })
+        .addTo(this.map)
+        .bindPopup(`📚 ${lib.name}`)
+        .openPopup();
+
+      // ROUTE
       this.routeControl = L.Routing.control({
-        waypoints: [
-          L.latLng(this.userLocation.lat, this.userLocation.lng),
-          L.latLng(lib.lat, lib.lng)
-        ],
+        waypoints: [L.latLng(this.userLocation.lat, this.userLocation.lng), L.latLng(lib.lat, lib.lng)],
         addWaypoints: false,
         draggableWaypoints: false,
         show: false,
-        createMarker: () => null
+        createMarker: () => null,
       }).addTo(this.map);
-    }
-  }
+    },
+  },
 };
 </script>
 
