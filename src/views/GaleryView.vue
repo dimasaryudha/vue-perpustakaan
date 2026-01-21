@@ -8,15 +8,15 @@
     </div>
 
     <div class="image-grid">
-        <div class="item img1">
+        <router-link to="/dokumentasi-1" class="item img1">
             <img src="@/assets/doc.jpg">
             <span>Rapat Tahunan Perusahaan</span>
-        </div>
+        </router-link>
 
-        <div class="item img2">
+        <router-link to="/dokumentasi-2" class="item img2">
             <img src="@/assets/doc2.jpg">
             <span>Sosialisasi Produk</span>
-        </div>
+        </router-link>
 
         <div class="item img3">
             <img src="@/assets/doc3.jpg">
@@ -62,7 +62,7 @@ body {
 }
 
 .banner {
-  width: 1456px;
+  width: 100%;
   height: 300px;
   overflow: hidden;
 }
@@ -71,7 +71,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .full-width {

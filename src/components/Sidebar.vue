@@ -50,12 +50,6 @@ export default {
           matchPaths: ["/galery"]
         },
         {
-          path: "/galery 1",
-          label: "Galery 1",
-          icon: "bi bi-image",
-          matchPaths: ["/galery"]
-        },
-        {
           path: "/maps",
           label: "Maps",
           icon: "bi bi-geo-alt",
@@ -85,6 +79,12 @@ export default {
           label: "Denda",
           icon: "bi bi-cash-stack",
           matchPaths: ["/denda", "/denda/tambah", "/denda/edit"],
+        },
+        {
+          path: "/galery 1",
+          label: "Galery 1",
+          icon: "bi bi-image",
+          matchPaths: ["/galery"]
         },
       ],
     };
