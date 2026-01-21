@@ -126,29 +126,27 @@ body {
 .zoom-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0,0,0,0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
 
+/* FRAME DIHILANGKAN */
 .zoom-box {
-  position: relative; /* FIX UTAMA */
-  background: #fff;
-  border-radius: 10px;
-  padding: 12px;
-  width: 600px;
-  max-width: 90%;
+  position: relative;
+  background: transparent;
+  padding: 0;
+  width: 90vw;
+  height: 90vh;
 }
 
+/* FOTO LEBIH GEDE */
 .zoom-image-wrapper {
-  position: relative;
   width: 100%;
-  height: 400px;
-  background: #000;
-  border-radius: 6px;
-  overflow: hidden;
+  height: 100%;
+  position: relative;
 }
 
 .zoom-image-wrapper img {
@@ -157,28 +155,28 @@ body {
   object-fit: contain;
 }
 
-/* TEKS DI DALAM FOTO */
+/* JUDUL FOTO */
 .zoom-caption {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 10px;
-  font-size: 15px;
+  padding: 12px;
+  font-size: 16px;
   color: #fff;
-  background: rgba(0,0,0,0.6);
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
   text-align: center;
 }
 
-/* TOMBOL CLOSE / BACK */
+/* TOMBOL CLOSE */
 .close-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
+  top: 15px;
+  right: 15px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   background: rgba(0,0,0,0.6);
   color: #fff;
   cursor: pointer;
@@ -200,11 +198,9 @@ body {
   }
 
   .zoom-box {
-    width: 95%;
-  }
-
-  .zoom-image-wrapper {
-    height: 280px;
+    width: 100vw;
+    height: 85vh;
   }
 }
+
 </style>
