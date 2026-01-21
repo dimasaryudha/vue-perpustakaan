@@ -49,27 +49,6 @@
     <div class="map-container">
       <div id="map"></div>
     </div>
-
-    <!-- LIBRARY LIST -->
-    <div class="card">
-      <h3 class="section-title">Daftar Perpustakaan</h3>
-      <div class="library-list">
-        <div
-          v-for="(lib, i) in libraries"
-          :key="i"
-          @click="selectedLibrary = lib"
-          :class="['library-item', { active: selectedLibrary === lib }]"
-        >
-          <div class="library-content">
-            <h4>{{ lib.name }}</h4>
-            <p class="address">{{ lib.address }}</p>
-            <p v-if="userLocation.lat" class="distance">
-              {{ calculateDistance(userLocation.lat, userLocation.lng, lib.lat, lib.lng).toFixed(2) }} km dari Anda
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -236,7 +215,6 @@ export default {
         shadowSize: [41, 41],
       });
 
-      // Marker perpustakaan
       this.libraryMarker = L.marker([lib.lat, lib.lng], {
         icon: libraryIcon,
       })
@@ -244,7 +222,6 @@ export default {
         .bindPopup(`📚 ${lib.name}`)
         .openPopup();
 
-      // Route
       this.routeControl = L.Routing.control({
         waypoints: [L.latLng(this.userLocation.lat, this.userLocation.lng), L.latLng(lib.lat, lib.lng)],
         addWaypoints: false,
@@ -253,7 +230,6 @@ export default {
         createMarker: () => null,
       }).addTo(this.map);
 
-      // Fit bounds
       this.map.fitBounds(
         [
           [this.userLocation.lat, this.userLocation.lng],
@@ -274,7 +250,6 @@ export default {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* HEADER */
 .header {
   text-align: center;
   margin-bottom: 30px;
@@ -292,7 +267,6 @@ export default {
   font-size: 1rem;
 }
 
-/* CARD */
 .card {
   background: white;
   padding: 24px;
@@ -301,7 +275,6 @@ export default {
   margin-bottom: 20px;
 }
 
-/* FORM */
 .form-group {
   margin-bottom: 20px;
 }
@@ -339,7 +312,6 @@ export default {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* TRANSPORT */
 .transport-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -368,7 +340,6 @@ export default {
   color: white;
 }
 
-/* INFO BOX */
 .info-box {
   display: flex;
   gap: 20px;
@@ -394,7 +365,6 @@ export default {
   color: #1f2937;
 }
 
-/* MAP */
 .map-container {
   border-radius: 12px;
   overflow: hidden;
@@ -407,7 +377,6 @@ export default {
   width: 100%;
 }
 
-/* LIBRARY LIST */
 .section-title {
   font-size: 1.25rem;
   color: #1f2937;
@@ -457,7 +426,6 @@ export default {
   font-weight: 500;
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
   .map-page {
     padding: 15px;
