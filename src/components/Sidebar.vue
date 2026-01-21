@@ -50,6 +50,12 @@ export default {
           matchPaths: ["/galery"]
         },
         {
+          path: "/galery 1",
+          label: "Galery 1",
+          icon: "bi bi-image",
+          matchPaths: ["/galery"]
+        },
+        {
           path: "/maps",
           label: "Maps",
           icon: "bi bi-geo-alt",
