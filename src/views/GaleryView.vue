@@ -2,21 +2,56 @@
     <div class="banner full-width">
         <img src="@/assets/doc.jpg" alt="banner" />
     </div>
-  
+
     <div class="title-container">
         <h1>Dokumentasi Perusahaan BPR Mitra Daya Mandiri</h1>
     </div>
 
     <div class="image-grid">
-        <img src="@/assets/doc.jpg" alt="img1" class="img1">
-        <img src="@/assets/doc2.jpg" alt="img2" class="img2">
-        <img src="@/assets/doc3.jpg" alt="img3" class="img3">
-        <img src="@/assets/doc2.jpg" alt="img4" class="img4">
-        <img src="@/assets/doc.jpg" alt="img5" class="img5">
-        <img src="@/assets/doc3.jpg" alt="img6" class="img6">
-        <img src="@/assets/doc3.jpg" alt="img7" class="img7">
-        <img src="@/assets/doc.jpg" alt="img8" class="img8">
-        <img src="@/assets/doc2.jpg" alt="img9" class="img9">
+        <div class="item img1">
+            <img src="@/assets/doc.jpg">
+            <span>Rapat Tahunan Perusahaan</span>
+        </div>
+
+        <div class="item img2">
+            <img src="@/assets/doc2.jpg">
+            <span>Sosialisasi Produk</span>
+        </div>
+
+        <div class="item img3">
+            <img src="@/assets/doc3.jpg">
+            <span>Kegiatan CSR</span>
+        </div>
+
+        <div class="item img4">
+            <img src="@/assets/doc2.jpg">
+            <span>Pelatihan Karyawan</span>
+        </div>
+
+        <div class="item img5">
+            <img src="@/assets/doc.jpg">
+            <span>Monitoring Cabang</span>
+        </div>
+
+        <div class="item img6">
+            <img src="@/assets/doc3.jpg">
+            <span>Audit Internal</span>
+        </div>
+
+        <div class="item img7">
+            <img src="@/assets/doc3.jpg">
+            <span>Perayaan HUT Perusahaan</span>
+        </div>
+
+        <div class="item img8">
+            <img src="@/assets/doc.jpg">
+            <span>Kunjungan Nasabah</span>
+        </div>
+
+        <div class="item img9">
+            <img src="@/assets/doc2.jpg">
+            <span>Kerja Sama Mitra</span>
+        </div>
     </div>
 </template>
 
@@ -27,14 +62,14 @@ body {
 
 .banner {
   width: 1456px;
-  height: 300px;          
+  height: 300px;
   overflow: hidden;
 }
 
 .banner img {
   width: 100%;
   height: 100%;
-  object-fit: cover;      
+  object-fit: cover;
   display: block;
 }
 
@@ -64,53 +99,50 @@ body {
   padding: 20px;
 }
 
-.img1 {
-  grid-column: span 2; 
-  object-fit: cover;
+.item {
+  position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
-.img2 {
-  object-fit: cover;   
+.item img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.item span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.img1 {
+  grid-column: span 2;
 }
 
 .img3 {
-  grid-row: span 2;      
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
+  grid-row: span 2;
 }
 
 .img4 {
-  grid-row: span 2;     
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
+  grid-row: span 2;
 }
 
-.img5 {
-  object-fit: cover;    
-  width: 100%;
-  height: 100%;
-}
-
-.img6 {
-  object-fit: cover;     
-  width: 100%;
-  height: 100%;
-}
-
-.img7 {
-  object-fit: cover;     
-  width: 100%;
-  height: 100%;
-}
-
-.img8, .img9 {
-  object-fit: cover;     
+.img2,
+.img5,
+.img6,
+.img7,
+.img8,
+.img9 {
   width: 100%;
   height: 100%;
 }
@@ -129,7 +161,9 @@ body {
     grid-auto-rows: 150px;
   }
 
-  .img1, .img3, .img4, .img7 {
+  .img1,
+  .img3,
+  .img4 {
     grid-column: span 1;
     grid-row: span 1;
   }
