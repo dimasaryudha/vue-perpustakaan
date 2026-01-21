@@ -10,6 +10,7 @@ import TambahPeminjamanView from "../views/TambahPeminjamanView.vue";
 import RiwayatPeminjamanView from "../views/RiwayatPeminjamanView.vue";
 import DendaView from "../views/DendaView.vue";
 import TambahDendaView from "../views/TambahDendaView.vue";
+import GaleryView from "@/views/GaleryView.vue";
 
 const routes = [
   {
@@ -71,6 +72,11 @@ const routes = [
     path: "/tambah-denda",
     name: "tambah-denda",
     component: TambahDendaView,
+  },
+  {
+    path: "/galery",
+    name: "galery",
+    component: GaleryView,
   },
   {
     path: "/maps",

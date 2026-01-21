@@ -44,6 +44,12 @@ export default {
           icon: "bi bi-house-door",
         },
         {
+          path: "/galery",
+          label: "Galery",
+          icon: "bi bi-image",
+          matchPaths: ["/galery"]
+        },
+        {
           path: "/maps",
           label: "Maps",
           icon: "bi bi-geo-alt",
