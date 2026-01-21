@@ -11,6 +11,7 @@ import RiwayatPeminjamanView from "../views/RiwayatPeminjamanView.vue";
 import DendaView from "../views/DendaView.vue";
 import TambahDendaView from "../views/TambahDendaView.vue";
 import GaleryView from "@/views/GaleryView.vue";
+import GaleryView1 from "@/views/GaleryView1.vue";
 
 const routes = [
   {
@@ -74,9 +75,14 @@ const routes = [
     component: TambahDendaView,
   },
   {
-    path: "/galery",
-    name: "galery",
-    component: GaleryView,
+      path: "/galery",
+      name: "galery",
+      component: GaleryView,
+  },
+  {
+    path: "/galery 1",
+    name: "galery 1",
+    component: GaleryView1,
   },
   {
     path: "/maps",
